@@ -1,8 +1,10 @@
-import 'package:expenses_app/widgets/adaptive_flat_button.dart';
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import './adaptive_flat_button.dart';
+
+import '../widgets/adaptive_flat_button.dart';
 
 class NewTransaction extends StatefulWidget {
   final Function addTx;
@@ -32,6 +34,7 @@ class _NewTransactionState extends State<NewTransaction> {
     widget.addTx(
       enteredTitle,
       enteredAmount,
+      _selectedDate,
     );
 
     Navigator.of(context).pop();
@@ -51,6 +54,7 @@ class _NewTransactionState extends State<NewTransaction> {
         _selectedDate = pickedDate;
       });
     });
+    print('...');
   }
 
   @override
@@ -72,12 +76,16 @@ class _NewTransactionState extends State<NewTransaction> {
                 decoration: InputDecoration(labelText: 'Title'),
                 controller: _titleController,
                 onSubmitted: (_) => _submitData(),
+                // onChanged: (val) {
+                //   titleInput = val;
+                // },
               ),
               TextField(
                 decoration: InputDecoration(labelText: 'Amount'),
                 controller: _amountController,
                 keyboardType: TextInputType.number,
                 onSubmitted: (_) => _submitData(),
+                // onChanged: (val) => amountInput = val,
               ),
               Container(
                 height: 70,
@@ -86,11 +94,11 @@ class _NewTransactionState extends State<NewTransaction> {
                     Expanded(
                       child: Text(
                         _selectedDate == null
-                            ? 'No Date Chosen'
-                            : 'Picked Date: ${DateFormat.yMd().format((_selectedDate))}',
+                            ? 'No Date Chosen!'
+                            : 'Picked Date: ${DateFormat.yMd().format(_selectedDate)}',
                       ),
                     ),
-                    AdaptiveFlatButton('Chose Date', _presentDatePicker)
+                    AdaptiveFlatButton('Choose Date', _presentDatePicker)
                   ],
                 ),
               ),

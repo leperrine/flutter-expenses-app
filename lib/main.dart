@@ -1,21 +1,19 @@
 import 'dart:io';
-import 'package:expenses_app/widgets/chart.dart';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:expenses_app/widgets/new_transaction.dart';
-import 'package:expenses_app/widgets/transaction_list.dart';
-import './models/transaction.dart';
-import './widgets/chart.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter/cupertino.dart';
+
+import './widgets/new_transaction.dart';
+import './widgets/transaction_list.dart';
+import './widgets/chart.dart';
+import './models/transaction.dart';
 
 void main() {
-  // SystemChrome.setPreferredOrientations(
-  //   [
-  //     DeviceOrientation.portraitUp,
-  //     DeviceOrientation.portraitDown,
-  //   ],
-  // );
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitUp,
+  // ]);
   runApp(MyApp());
 }
 
@@ -25,36 +23,35 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Personal Expenses',
       theme: ThemeData(
-        primarySwatch: Colors.purple,
-        accentColor: Colors.amber,
-        errorColor: Colors.red,
-        fontFamily: 'Quicksand',
-        textTheme: ThemeData.light().textTheme.copyWith(
-              title: TextStyle(
-                fontFamily: 'Opensans',
-                fontWeight: FontWeight.bold,
-                fontSize: 18,
-              ),
-              button: TextStyle(
-                color: Colors.white,
-              ),
-            ),
-        appBarTheme: AppBarTheme(
+          primarySwatch: Colors.purple,
+          accentColor: Colors.amber,
+          // errorColor: Colors.red,
+          fontFamily: 'Quicksand',
           textTheme: ThemeData.light().textTheme.copyWith(
                 title: TextStyle(
                   fontFamily: 'OpenSans',
-                  fontSize: 20,
                   fontWeight: FontWeight.bold,
+                  fontSize: 18,
                 ),
+                button: TextStyle(color: Colors.white),
               ),
-        ),
-      ),
+          appBarTheme: AppBarTheme(
+            textTheme: ThemeData.light().textTheme.copyWith(
+                  title: TextStyle(
+                    fontFamily: 'OpenSans',
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+          )),
       home: MyHomePage(),
     );
   }
 }
 
 class MyHomePage extends StatefulWidget {
+  // String titleInput;
+  // String amountInput;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -64,17 +61,16 @@ class _MyHomePageState extends State<MyHomePage> {
     // Transaction(
     //   id: 't1',
     //   title: 'New Shoes',
-    //   amount: 59.99,
+    //   amount: 69.99,
     //   date: DateTime.now(),
     // ),
     // Transaction(
     //   id: 't2',
-    //   title: 'New Headphones',
-    //   amount: 69.99,
+    //   title: 'Weekly Groceries',
+    //   amount: 16.53,
     //   date: DateTime.now(),
     // ),
   ];
-
   bool _showChart = false;
 
   List<Transaction> get _recentTransactions {
@@ -88,13 +84,10 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _addNewTransaction(
-    String title,
-    double amount,
-    DateTime chosenDate,
-  ) {
+      String txTitle, double txAmount, DateTime chosenDate) {
     final newTx = Transaction(
-      title: title,
-      amount: amount,
+      title: txTitle,
+      amount: txAmount,
       date: chosenDate,
       id: DateTime.now().toString(),
     );
@@ -119,16 +112,14 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void _deleteTransaction(String id) {
     setState(() {
-      _userTransactions.removeWhere((tx) {
-        return tx.id == id;
-      });
+      _userTransactions.removeWhere((tx) => tx.id == id);
     });
   }
 
   @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context);
-    final isLandScape = mediaQuery.orientation == Orientation.landscape;
+    final isLandscape = mediaQuery.orientation == Orientation.landscape;
     final PreferredSizeWidget appBar = Platform.isIOS
         ? CupertinoNavigationBar(
             middle: Text(
@@ -140,12 +131,14 @@ class _MyHomePageState extends State<MyHomePage> {
                 GestureDetector(
                   child: Icon(CupertinoIcons.add),
                   onTap: () => _startAddNewTransaction(context),
-                )
+                ),
               ],
             ),
           )
         : AppBar(
-            title: Text('Personal Expenses'),
+            title: Text(
+              'Personal Expenses',
+            ),
             actions: <Widget>[
               IconButton(
                 icon: Icon(Icons.add),
@@ -160,14 +153,13 @@ class _MyHomePageState extends State<MyHomePage> {
           0.7,
       child: TransactionList(_userTransactions, _deleteTransaction),
     );
-
     final pageBody = SafeArea(
       child: SingleChildScrollView(
         child: Column(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            if (isLandScape)
+            if (isLandscape)
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
@@ -186,7 +178,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ],
               ),
-            if (!isLandScape)
+            if (!isLandscape)
               Container(
                 height: (mediaQuery.size.height -
                         appBar.preferredSize.height -
@@ -194,14 +186,14 @@ class _MyHomePageState extends State<MyHomePage> {
                     0.3,
                 child: Chart(_recentTransactions),
               ),
-            if (!isLandScape) txListWidget,
-            if (isLandScape)
+            if (!isLandscape) txListWidget,
+            if (isLandscape)
               _showChart
                   ? Container(
                       height: (mediaQuery.size.height -
                               appBar.preferredSize.height -
                               mediaQuery.padding.top) *
-                          0.3,
+                          0.7,
                       child: Chart(_recentTransactions),
                     )
                   : txListWidget
